@@ -1,61 +1,48 @@
 <template>
-    <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-buttons slot="start">
-                    <ion-menu-button />
-                </ion-buttons>
+    <IonPage>
+        <IonHeader>
+            <IonToolbar>
+                <IonButtons slot="start">
+                    <IonMenuButton />
+                </IonButtons>
 
-                <ion-title>Words List</ion-title>
-            </ion-toolbar>
-        </ion-header>
-
-        <IonFab>
-            <IonFabButton @click="translate('words')">
-                <ion-icon :icon="add"></ion-icon>
-            </IonFabButton>
-        </IonFab>
+                <IonTitle>Words List</IonTitle>
+            </IonToolbar>
+        </IonHeader>
 
         <IonContent>
+            <AddWord />
+
             <IonList>
-                <IonItem v-for="word of savedWords">
-                    <IonLabel class="ion-text-start">{{ word.source }}</IonLabel>
-                    <IonLabel class="ion-text-end">{{ word.translation }}</IonLabel>
-                </IonItem>
+                <WordLine
+                    v-for="word of savedWords"
+                    :key="word.source"
+                    :source="word.source"
+                    :translation="word.translation"
+                    :options="[]"
+                />
             </IonList>
         </IonContent>
-    </ion-page>
+    </IonPage>
 </template>
 
 <script lang="ts" setup>
-    import { 
-        IonHeader, 
-        IonPage, 
-        IonFab, 
-        IonFabButton, 
-        IonIcon, 
-        IonList, 
-        IonItem,
-        IonLabel, 
-        IonGrid,
-        IonRow,
-        IonCol, 
+    import {
+        IonHeader,
+        IonPage,
+        IonList,
         IonContent,
         IonToolbar,
-        IonButtons, 
-        IonMenuButton, 
+        IonButtons,
+        IonMenuButton,
         IonTitle
     } from '@ionic/vue'
-
-    import { add } from 'ionicons/icons'
-
-    import useTranslator from '../composables/use-translator'
+    import WordLine from '../components/WordLine.vue'
+    import AddWord from '../components/AddWord.vue'
 
     const savedWords: Array<{ source: string, translation: string }> = [
         { source: 'hello', translation: 'привет' },
         { source: 'buy', translation: 'купить' },
         { source: 'test', translation: 'тест' },
     ]
-
-    const { translate } = useTranslator()
 </script>
