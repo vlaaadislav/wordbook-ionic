@@ -1,9 +1,11 @@
+import translateByYandex from './ya-translator'
+
 export interface TranslatorResponse {
     source: string
-    translations: string
-    synonims: string[]
+    translation: string
+    options: string[]
 }
 
-export default async function translate(word: string) {
-
+export function translate(source: string) {
+    return translateByYandex(source)
 }
