@@ -4,7 +4,7 @@
             <IonIcon :icon="add" @click="openModal" />
         </IonFabButton>
 
-        <IonModal :is-open="isModalOpen">
+        <IonModal :is-open="isModalOpen" @didDismiss="isModalOpen = false">
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Add a new word</IonTitle>
@@ -18,30 +18,61 @@
             <IonContent :scroll-y="false" class="ion-padding">
                 <IonInput
                     v-model="newWord"
+                    :class="{
+                        'ion-touched': isInputTouched,
+                        'ion-valid': isNewWordValid,
+                        'ion-invalid': !isNewWordValid
+                    }"
                     label="Enter text"
                     fill="outline"
                     label-placement="floating"
                     clear-input
+                    @ionFocus="isInputTouched = false"
+                    @ionBlur="isInputTouched = true"
                 />
             </IonContent>
 
             <IonFooter class="modal-footer ion-no-border ion-padding">
-                <IonButton expand="block">Save</IonButton>
+                <IonButton expand="block" :disabled="!isNewWordValid || isTranslating" @click="saveNewWord">Save</IonButton>
             </IonFooter>
         </IonModal>
     </IonFab>
 </template>
 
 <script lang="ts" setup>
-    import { ref } from 'vue'
-    import { IonButton, IonButtons, IonContent, IonFab, IonFabButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonModal, IonTitle, IonToolbar } from '@ionic/vue'
+    import { ref, computed } from 'vue'
+    import {
+        IonButton,
+        IonButtons,
+        IonContent,
+        IonFab,
+        IonFabButton,
+        IonFooter,
+        IonHeader,
+        IonIcon,
+        IonInput,
+        IonModal,
+        IonTitle,
+        IonToolbar
+    } from '@ionic/vue'
     import { add } from 'ionicons/icons'
+    import useTranslator from '../composables/use-translator'
+
+    const newWord = ref('')
+    const isNewWordValid = computed(() => newWord.value.trim().length > 0)
 
     const isModalOpen = ref(false)
-    const newWord = ref('')
+    const isInputTouched = ref(false)
 
     const openModal = () => isModalOpen.value = true
     const closeModal = () => isModalOpen.value = false
+
+    const { translate, isTranslating } = useTranslator()
+
+    const saveNewWord = async () => {
+        await translate(newWord.value)
+        closeModal()
+    }
 </script>
 
 <style scoped>

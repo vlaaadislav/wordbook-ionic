@@ -15,7 +15,7 @@
 
             <IonList>
                 <WordLine
-                    v-for="word of savedWords"
+                    v-for="word of wordsList"
                     :key="word.source"
                     :source="word.source"
                     :translation="word.translation"
@@ -37,12 +37,9 @@
         IonMenuButton,
         IonTitle
     } from '@ionic/vue'
-    import WordLine from '../components/WordLine.vue'
-    import AddWord from '../components/AddWord.vue'
+    import WordLine from '@/components/WordLine.vue'
+    import AddWord from '@/components/AddWord.vue'
+    import useTranslator from '@/composables/use-translator'
 
-    const savedWords: Array<{ source: string, translation: string }> = [
-        { source: 'hello', translation: 'привет' },
-        { source: 'buy', translation: 'купить' },
-        { source: 'test', translation: 'тест' },
-    ]
+    const { wordsList } = useTranslator()
 </script>
