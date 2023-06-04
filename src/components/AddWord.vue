@@ -33,7 +33,7 @@
             </IonContent>
 
             <IonFooter class="modal-footer ion-no-border ion-padding">
-                <IonButton expand="block" :disabled="!isNewWordValid || isTranslating" @click="saveNewWord">Save</IonButton>
+                <IonButton expand="block" :disabled="!isNewWordValid || isLoading" @click="saveNewWord">Save</IonButton>
             </IonFooter>
         </IonModal>
     </IonFab>
@@ -56,7 +56,7 @@
         IonToolbar
     } from '@ionic/vue'
     import { add } from 'ionicons/icons'
-    import useTranslator from '../composables/use-translator'
+    import useTranslator from '../composables/use-word-list'
 
     const newWord = ref('')
     const isNewWordValid = computed(() => newWord.value.trim().length > 0)
@@ -64,14 +64,22 @@
     const isModalOpen = ref(false)
     const isInputTouched = ref(false)
 
-    const openModal = () => isModalOpen.value = true
+    const resetState = () => {
+        newWord.value = ''
+        isInputTouched.value = false
+    }
+
+    const openModal = () => {
+        resetState()
+        isModalOpen.value = true
+    }
     const closeModal = () => isModalOpen.value = false
 
-    const { translate, isTranslating } = useTranslator()
+    const { appendWord, isLoading, error } = useTranslator()
 
     const saveNewWord = async () => {
-        await translate(newWord.value)
-        closeModal()
+        await appendWord(newWord.value)
+        error.value || closeModal()
     }
 </script>
 

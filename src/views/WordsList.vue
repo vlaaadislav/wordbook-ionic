@@ -7,6 +7,8 @@
                 </IonButtons>
 
                 <IonTitle>Words List</IonTitle>
+
+                <IonProgressBar v-if="isLoading" type="indeterminate" />
             </IonToolbar>
         </IonHeader>
 
@@ -35,11 +37,12 @@
         IonToolbar,
         IonButtons,
         IonMenuButton,
-        IonTitle
+        IonTitle,
+        IonProgressBar,
     } from '@ionic/vue'
     import WordLine from '@/components/WordLine.vue'
     import AddWord from '@/components/AddWord.vue'
-    import useTranslator from '@/composables/use-translator'
+    import useWordList from '@/composables/use-word-list'
 
-    const { wordsList } = useTranslator()
+    const { isLoading, wordsList } = useWordList()
 </script>
