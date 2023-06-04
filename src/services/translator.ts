@@ -1,6 +1,7 @@
 import translateByYandex from './ya-translator'
 
 export interface TranslatorResponse {
+    id: number
     source: string
     translation: string
     options: string[]

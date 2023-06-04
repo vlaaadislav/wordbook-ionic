@@ -29,10 +29,25 @@ export default createGlobalState(() => {
         init()
     }, null, { ...asyncStateOptions, immediate: false })
 
-    const { execute: deleteWord, error: deleteError, isLoading: isDeleteLoading } = useAsyncState(async (index: number) => {
-        const updateWordList = toRaw(wordsList.value).filter((_, i) => i !== index)
+    const { execute: deleteWord, error: deleteError, isLoading: isDeleteLoading } = useAsyncState(async (id: TranslatorResponse['id']) => {
+        const updateWordList = toRaw(wordsList.value).filter(item => item.id !== id)
 
         await (await storage).set(WORD_LIST_KEY, updateWordList)
+        init()
+    }, null, { ...asyncStateOptions, immediate: false })
+
+    const {
+        execute: changeTranslation,
+        error: changeTranslationError,
+        isLoading: isChangeTranslationLoading
+    } = useAsyncState(async (id: TranslatorResponse['id'], option: TranslatorResponse['options'][number]) => {
+        const updatedWordList = toRaw(wordsList.value).map(item => {
+            return item.id === id
+                ? { ...item, translation: option }
+                : item
+        })
+
+        await (await storage).set(WORD_LIST_KEY, updatedWordList)
         init()
     }, null, { ...asyncStateOptions, immediate: false })
 
@@ -43,15 +58,16 @@ export default createGlobalState(() => {
         })
     }
 
-    const error = computed(() => storageError.value || translatorError.value || deleteError.value)
-    const isLoading = computed(() => isStorageLoading.value || isTranslatorLoading.value || isDeleteLoading.value)
+    const error = computed(() => storageError.value || translatorError.value || deleteError.value || changeTranslationError.value)
+    const isLoading = computed(() => isStorageLoading.value || isTranslatorLoading.value || isDeleteLoading.value || isChangeTranslationLoading.value)
 
     return {
         wordsList,
         error,
         isLoading,
         appendWord: (source: string) => appendWord(0, source),
-        deleteWord: (index: number) => deleteWord(0, index),
+        changeTranslation: (id: number, option: string) => changeTranslation(0, id, option),
+        deleteWord: (id: TranslatorResponse['id']) => deleteWord(0, id),
         isWordInWordList
     }
 })

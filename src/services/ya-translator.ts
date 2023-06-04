@@ -1,3 +1,4 @@
+import uniqid from 'uniqid'
 import { TranslatorResponse } from './translator'
 
 interface TranslateResponse {
@@ -36,6 +37,7 @@ const translateByDictionary = async (word: string): Promise<TranslatorResponse> 
     })
 
     return {
+        id: uniqid(),
         source: word,
         translation: options[0] || '',
         options
@@ -49,6 +51,7 @@ const translateByTranslate = async (source: string): Promise<TranslatorResponse>
     const options = data.text || []
 
     return {
+        id: uniqid,
         source,
         translation: options[0] || '',
         options: options

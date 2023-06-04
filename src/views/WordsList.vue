@@ -17,12 +17,11 @@
 
             <IonList ref="list">
                 <WordLine
-                    v-for="(word, index) of wordsList"
-                    :key="word.source"
-                    :source="word.source"
-                    :translation="word.translation"
-                    :options="[]"
-                    @delete="handleDelete(index)"
+                    v-for="word of wordsList"
+                    :key="word.id"
+                    :item="word"
+                    @option-select="changeTranslation"
+                    @delete="handleDelete(word.id)"
                 />
             </IonList>
         </IonContent>
@@ -46,12 +45,12 @@
     import AddWord from '@/components/AddWord.vue'
     import useWordList from '@/composables/use-word-list'
 
-    const { isLoading, wordsList, deleteWord } = useWordList()
+    const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 
     const list = ref<typeof IonList | null>(null)
 
-    const handleDelete = (index: number) => {
+    const handleDelete = (id: number) => {
         list.value?.$el.closeSlidingItems()
-        deleteWord(index)
+        deleteWord(id)
     }
 </script>

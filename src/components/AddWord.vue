@@ -66,15 +66,18 @@
     import { add } from 'ionicons/icons'
     import useTranslator from '../composables/use-word-list'
 
+    const { appendWord, isLoading, error, isWordInWordList } = useTranslator()
+
     const newWord = ref('')
+    const isModalOpen = ref(false)
+    const isInputTouched = ref(false)
+
     const isNewWordValid = computed(() => newWord.value.trim().length > 0)
-    const isWordAlreadyExists = computed(() => newWord.value && isWordInWordList(newWord.value))
+    const isWordAlreadyExists = computed(() => newWord.value && isModalOpen.value && isWordInWordList(newWord.value))
     const isWordAlreadyExistsText = computed(() => {
         return isWordAlreadyExists.value ? 'This word already in wordbook!' : undefined
     })
 
-    const isModalOpen = ref(false)
-    const isInputTouched = ref(false)
 
     const resetState = () => {
         newWord.value = ''
@@ -86,8 +89,6 @@
         isModalOpen.value = true
     }
     const closeModal = () => isModalOpen.value = false
-
-    const { appendWord, isLoading, error, isWordInWordList } = useTranslator()
 
     const saveNewWord = async () => {
         await appendWord(newWord.value)
