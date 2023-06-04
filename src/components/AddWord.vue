@@ -34,7 +34,12 @@
             </IonContent>
 
             <IonFooter class="modal-footer ion-no-border ion-padding">
-                <IonButton expand="block" :disabled="!isNewWordValid || isLoading" @click="saveNewWord">
+                <IonButton
+                    expand="block"
+                    :disabled="!isNewWordValid || isLoading"
+                    :color="isWordAlreadyExists ? 'warning' : 'primary'"
+                    @click="saveNewWord"
+                >
                     {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
                 </IonButton>
             </IonFooter>
