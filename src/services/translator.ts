@@ -7,5 +7,5 @@ export interface TranslatorResponse {
 }
 
 export function translate(source: string) {
-    return translateByYandex(source)
+    return translateByYandex(source.trim())
 }

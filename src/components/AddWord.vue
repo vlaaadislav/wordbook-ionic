@@ -26,6 +26,7 @@
                     label="Enter text"
                     fill="outline"
                     label-placement="floating"
+                    :helper-text="isWordAlreadyExistsText"
                     clear-input
                     @ionFocus="isInputTouched = false"
                     @ionBlur="isInputTouched = true"
@@ -33,7 +34,9 @@
             </IonContent>
 
             <IonFooter class="modal-footer ion-no-border ion-padding">
-                <IonButton expand="block" :disabled="!isNewWordValid || isLoading" @click="saveNewWord">Save</IonButton>
+                <IonButton expand="block" :disabled="!isNewWordValid || isLoading" @click="saveNewWord">
+                    {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
+                </IonButton>
             </IonFooter>
         </IonModal>
     </IonFab>
@@ -60,6 +63,10 @@
 
     const newWord = ref('')
     const isNewWordValid = computed(() => newWord.value.trim().length > 0)
+    const isWordAlreadyExists = computed(() => newWord.value && isWordInWordList(newWord.value))
+    const isWordAlreadyExistsText = computed(() => {
+        return isWordAlreadyExists.value ? 'This word already in wordbook!' : undefined
+    })
 
     const isModalOpen = ref(false)
     const isInputTouched = ref(false)
@@ -75,7 +82,7 @@
     }
     const closeModal = () => isModalOpen.value = false
 
-    const { appendWord, isLoading, error } = useTranslator()
+    const { appendWord, isLoading, error, isWordInWordList } = useTranslator()
 
     const saveNewWord = async () => {
         await appendWord(newWord.value)

@@ -41,10 +41,18 @@ export default createGlobalState(() => {
         init()
     }, null, { ...asyncStateOptions, immediate: false })
 
+    const isWordInWordList = (source: string) => {
+        const trimmedSource = source.toLowerCase().trim()
+        return !!wordsList.value.find(entry => {
+            return entry.source.toLocaleLowerCase().trim() === trimmedSource
+        })
+    }
+
     return {
         wordsList,
         error,
         isLoading,
-        appendWord: (source: string) => appendWord(0, source)
+        appendWord: (source: string) => appendWord(0, source),
+        isWordInWordList
     }
 })
