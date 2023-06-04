@@ -1,59 +1,40 @@
-import { ref, toRaw, nextTick } from 'vue'
+import { ref, toRaw, computed } from 'vue'
 import { useAsyncState, createGlobalState } from '@vueuse/core'
 import { toastController } from '@ionic/vue'
 import { translate } from '../services/translator'
 import storage, { WORD_LIST_KEY } from '../services/storage'
 import type { TranslatorResponse } from '../services/translator'
 
-type GetAsyncStateOptions = (triggerLoader?: boolean, immediate?: boolean) => Parameters<typeof useAsyncState>[2]
-
 export default createGlobalState(() => {
     const wordsList = ref<TranslatorResponse[]>([])
-    const error = ref<unknown>(null)
-    const isLoading = ref(false)
 
-    const getAsyncStateOptions: GetAsyncStateOptions = (triggerLoader = false, immediate = false) => ({
-        immediate,
+    const asyncStateOptions: Parameters<typeof useAsyncState>[2] = {
         onError: (e: unknown) => {
-            error.value = e
-            triggerLoader && (isLoading.value = false)
-            console.error(e)
             e instanceof Error && toastController.create({
                 message: e.message,
                 duration: 1500
             }).then(toast => toast.present())
-        },
-        onSuccess: () => triggerLoader && (isLoading.value = false)
-    })
-
-    const startLoading = () => {
-        error.value = null
-        isLoading.value = true
+        }
     }
 
-    const { execute: init } = useAsyncState(async () => {
-        startLoading()
+    const { execute: init, error: storageError, isLoading: isStorageLoading } = useAsyncState(async () => {
         wordsList.value = (await (await storage).get(WORD_LIST_KEY)) || []
-    }, null, getAsyncStateOptions(true, true))
+    }, null, asyncStateOptions)
 
-    const { execute: appendWord } = useAsyncState(async (source: string) => {
-        startLoading()
-
+    const { execute: appendWord, error: translatorError, isLoading: isTranslatorLoading } = useAsyncState(async (source: string) => {
         const translatorResponse = await translate(source)
         const updatedWordList = [...toRaw(wordsList.value), translatorResponse]
 
         await (await storage).set(WORD_LIST_KEY, updatedWordList)
         init()
-    }, null, getAsyncStateOptions())
+    }, null, { ...asyncStateOptions, immediate: false })
 
-    const { execute: deleteWord } = useAsyncState(async (index: number) => {
-        startLoading()
-
+    const { execute: deleteWord, error: deleteError, isLoading: isDeleteLoading } = useAsyncState(async (index: number) => {
         const updateWordList = toRaw(wordsList.value).filter((_, i) => i !== index)
 
         await (await storage).set(WORD_LIST_KEY, updateWordList)
         init()
-    }, null, getAsyncStateOptions())
+    }, null, { ...asyncStateOptions, immediate: false })
 
     const isWordInWordList = (source: string) => {
         const trimmedSource = source.toLowerCase().trim()
@@ -61,6 +42,9 @@ export default createGlobalState(() => {
             return entry.source.toLocaleLowerCase().trim() === trimmedSource
         })
     }
+
+    const error = computed(() => storageError.value || translatorError.value || deleteError.value)
+    const isLoading = computed(() => isStorageLoading.value || isTranslatorLoading.value || isDeleteLoading.value)
 
     return {
         wordsList,
