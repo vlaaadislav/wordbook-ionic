@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:22
 
 RUN npm install -g @ionic/cli@latest
 
