@@ -14,19 +14,13 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
-import { useOffsetPagination } from '@vueuse/core'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 
 const list = ref<typeof IonList | null>(null)
 
-const perPage = 2
-const { currentPage } = useOffsetPagination({
-  total: () => wordsList.value.length,
-  page: 1,
-  pageSize: perPage,
-})
-
+const perPage = 1
+const currentPage = ref(1)
 const currentPageWords = computed(() => wordsList.value.slice(currentPage.value - 1, currentPage.value - 1 + perPage))
 
 function handleDelete(id: number) {
