@@ -5,7 +5,7 @@ import {
   IonModal,
   toastController,
 } from '@ionic/vue'
-import useTranslator from '../composables/use-word-list'
+import useTranslator from '../composables/useWordList'
 
 interface Props {
   trigger: string

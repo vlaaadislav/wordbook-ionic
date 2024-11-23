@@ -13,6 +13,7 @@ import {
 
 interface Props {
   item: TranslatorResponse
+  showTranslation?: boolean
 }
 
 interface Emits {
@@ -20,7 +21,9 @@ interface Emits {
   (e: 'optionSelect', id: Props['item']['id'], option: Props['item']['options'][number]): void
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  showTranslation: true,
+})
 defineEmits<Emits>()
 </script>
 
@@ -30,7 +33,8 @@ defineEmits<Emits>()
       <IonLabel class="ion-text-start">
         {{ item.source }}
       </IonLabel>
-      <IonLabel class="ion-text-end">
+
+      <IonLabel v-show="showTranslation" class="ion-text-end">
         {{ item.translation }}
       </IonLabel>
     </IonItem>

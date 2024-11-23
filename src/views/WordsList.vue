@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import AddWord from '@/components/AddWord.vue'
 import FooterPaginator from '@/components/FooterPaginator.vue'
 import WordLine from '@/components/WordLine.vue'
-import useWordList from '@/composables/use-word-list'
+import WordsListOperations from '@/components/WordsListOperations.vue'
+import useWordList from '@/composables/useWordList'
+import useWordbookSettings from '@/composables/useWordbookSettings'
 import {
   IonContent,
   IonFooter,
@@ -16,6 +17,7 @@ import {
 import { useOffsetPagination } from '@vueuse/core'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
+const { isTranslationVisible } = useWordbookSettings()
 
 const list = ref<typeof IonList | null>(null)
 
@@ -53,7 +55,7 @@ function handleDelete(id: string) {
 
     <IonProgressBar v-if="isLoading" type="indeterminate" />
 
-    <AddWord />
+    <WordsListOperations />
 
     <IonContent color="light">
       <IonList
@@ -66,6 +68,7 @@ function handleDelete(id: string) {
           v-for="word of currentPageWords"
           :key="word.id"
           :item="word"
+          :show-translation="isTranslationVisible"
           @option-select="changeTranslation"
           @delete="handleDelete(word.id)"
         />
