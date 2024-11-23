@@ -66,7 +66,7 @@ export default createGlobalState(() => {
     error,
     isLoading,
     appendWord: (source: string) => appendWord(0, source),
-    changeTranslation: (id: number, option: string) => changeTranslation(0, id, option),
+    changeTranslation: (id: TranslatorResponse['id'], option: string) => changeTranslation(0, id, option),
     deleteWord: (id: TranslatorResponse['id']) => deleteWord(0, id),
     isWordInWordList,
   }

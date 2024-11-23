@@ -31,13 +31,23 @@ const currentPage = defineModel<number>({ required: true })
           </Pagination.Prev>
 
           <template v-for="(page, index) of items">
-            <Pagination.ListItem v-if="page.type === 'page'" :key="index" :value="page.value" as-child>
+            <Pagination.ListItem
+              v-if="page.type === 'page'"
+              :key="index"
+              :value="page.value"
+              as-child
+            >
               <IonButton :fill="page.value === currentPage ? 'solid' : undefined" size="large">
                 {{ page.value }}
               </IonButton>
             </Pagination.ListItem>
 
-            <Pagination.Ellipsis v-else :key="page.type" :index="index" as-child>
+            <Pagination.Ellipsis
+              v-else
+              :key="page.type"
+              :index="index"
+              as-child
+            >
               <IonButton>
                 &#8230;
               </IonButton>

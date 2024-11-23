@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TranslatorResponse } from '@/services/translator'
 import {
   IonContent,
   IonItem,
@@ -11,20 +12,16 @@ import {
 } from '@ionic/vue'
 
 interface Props {
-  item: {
-    id: number
-    source: string
-    translation: string
-    options: string[]
-  }
+  item: TranslatorResponse
+}
+
+interface Emits {
+  (e: 'delete', id: Props['item']['id']): void
+  (e: 'optionSelect', id: Props['item']['id'], option: Props['item']['options'][number]): void
 }
 
 defineProps<Props>()
-
-const emit = defineEmits<{
-  (e: 'delete', id: Props['item']['id']): void
-  (e: 'optionSelect', id: Props['item']['id'], option: Props['item']['options'][number]): void
-}>()
+defineEmits<Emits>()
 </script>
 
 <template>
@@ -38,14 +35,19 @@ const emit = defineEmits<{
       </IonLabel>
     </IonItem>
 
-    <IonPopover v-if="item.options.length > 0" :trigger="item.id" alignment="end" dismiss-on-select>
+    <IonPopover
+      v-if="item.options.length > 0"
+      :trigger="item.id"
+      alignment="end"
+      dismiss-on-select
+    >
       <IonContent>
         <IonList>
           <IonItem
             v-for="option of item.options"
             :key="option"
             button
-            @click="emit('optionSelect', item.id, option)"
+            @click="$emit('optionSelect', item.id, option)"
           >
             {{ option }}
           </IonItem>
@@ -53,8 +55,8 @@ const emit = defineEmits<{
       </IonContent>
     </IonPopover>
 
-    <IonItemOptions @ion-swipe="emit('delete', item.id)">
-      <IonItemOption color="danger" @click="emit('delete', item.id)">
+    <IonItemOptions @ion-swipe="$emit('delete', item.id)">
+      <IonItemOption color="danger" @click="$emit('delete', item.id)">
         Delete
       </IonItemOption>
     </IonItemOptions>

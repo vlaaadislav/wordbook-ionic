@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Components as IonComponents } from '@ionic/core/components'
 import {
   IonButton,
   IonButtons,
@@ -10,98 +11,103 @@ import {
   IonIcon,
   IonInput,
   IonModal,
+  IonSpinner,
   IonTitle,
   IonToolbar,
+  toastController,
 } from '@ionic/vue'
-import { useConfirmDialog } from '@vueuse/core'
-import { add, closeOutline } from 'ionicons/icons'
+import { add } from 'ionicons/icons'
 import useTranslator from '../composables/use-word-list'
 
-const { appendWord, error, isWordInWordList } = useTranslator()
+const { appendWord, error, isWordInWordList, isLoading } = useTranslator()
+
+const isOpened = ref(false)
 
 const newWord = ref('')
-
-const { isRevealed, cancel: close, reveal } = useConfirmDialog()
-
 const isInputTouched = ref(false)
 
-const isNewWordValid = computed(() => newWord.value.length > 0)
-const isWordAlreadyExists = computed(() => newWord.value && isRevealed.value && isWordInWordList(newWord.value))
-const isWordAlreadyExistsText = computed(() => {
-  return isWordAlreadyExists.value ? 'This word already in wordbook!' : undefined
+const wordToSave = computed(() => {
+  const word = newWord.value.toLocaleLowerCase().trim()
+  return `${word.charAt(0).toUpperCase()}${word.slice(1)}`
 })
 
-async function showModal() {
-  await reveal()
-  newWord.value = ''
-  isInputTouched.value = false
-}
+const isNewWordValid = computed(() => wordToSave.value.length > 0)
+const isWordAlreadyExists = computed(() => wordToSave.value && isWordInWordList(newWord.value))
 
 async function saveNewWord() {
   if (!isNewWordValid.value) {
     return
   }
 
-  await appendWord(newWord.value)
-  error.value || close()
+  await appendWord(wordToSave.value)
+
+  if (error.value) {
+    return
+  }
+
+  const toast = await toastController.create({
+    message: 'Word successfully added to wordbook!',
+    swipeGesture: 'vertical',
+    duration: 1500,
+  })
+  toast.present()
+
+  isOpened.value = false
+  newWord.value = ''
+  isInputTouched.value = false
 }
 </script>
 
 <template>
   <IonFab slot="fixed" vertical="bottom" horizontal="end">
-    <IonFabButton id="add-word-fab-button">
-      <IonIcon :icon="add" @click="reveal" />
+    <IonFabButton id="add-word-fab-button" size="small">
+      <IonIcon :icon="add" />
     </IonFabButton>
 
-    <IonModal :is-open="isRevealed" @did-dismiss="close()">
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Add a new word</IonTitle>
-
-          <IonButtons slot="end">
-            <IonButton @click="close()">
-              <IonIcon slot="icon-only" :icon="closeOutline" />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent :scroll-y="false" class="ion-padding">
+    <IonModal
+      :is-open="isOpened"
+      trigger="add-word-fab-button"
+      :breakpoints="[0, 0.25]"
+      :initial-breakpoint="0.25"
+      :handle="false"
+      @did-present="$refs['input-ref']?.$el.setFocus()"
+      @will-dismiss="isOpened = false"
+      @will-present="isOpened = true"
+    >
+      <div class="add-word-container ion-justify-content-between ion-padding">
         <IonInput
-          v-model.trim="newWord"
+          ref="input-ref"
+          v-model="newWord"
           :class="{
             'ion-touched': isInputTouched,
-            'ion-valid': isNewWordValid,
             'ion-invalid': !isNewWordValid,
           }"
-          label="Enter text"
           fill="outline"
+          label="Enter a new word"
           label-placement="floating"
-          :helper-text="isWordAlreadyExistsText"
+          :helper-text="isWordAlreadyExists ? 'This word already in wordbook!' : undefined"
+          error-text="Field is required"
           clear-input
-          @ion-focus="isInputTouched = false"
           @ion-blur="isInputTouched = true"
         />
-      </IonContent>
 
-      <IonFooter class="ion-no-border ion-padding">
-        <IonButtons>
-          <IonButton
-            expand="block"
-            :color="isWordAlreadyExists ? 'warning' : 'primary'"
-            @click="saveNewWord()"
-          >
-            {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
-          </IonButton>
-        </IonButtons>
-      </IonFooter>
+        <IonButton
+          expand="block"
+          :color="isWordAlreadyExists ? 'light' : 'primary'"
+          :disabled="isLoading"
+          @click="saveNewWord()"
+        >
+          {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
+        </IonButton>
+      </div>
     </IonModal>
   </IonFab>
 </template>
 
 <style scoped>
-    .modal-footer {
-        position: absolute;
-        bottom: 0;
+    .add-word-container {
+      height: 25%;
+      display: flex;
+      flex-direction: column;
     }
 </style>

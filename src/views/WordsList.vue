@@ -19,11 +19,11 @@ const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 
 const list = ref<typeof IonList | null>(null)
 
-const perPage = 1
+const perPage = 10
 const currentPage = ref(1)
 const currentPageWords = computed(() => wordsList.value.slice(currentPage.value - 1, currentPage.value - 1 + perPage))
 
-function handleDelete(id: number) {
+function handleDelete(id: string) {
   list.value?.$el.closeSlidingItems()
   deleteWord(id)
 }
