@@ -21,7 +21,9 @@ const list = ref<typeof IonList | null>(null)
 
 const perPage = 10
 const currentPage = ref(1)
-const currentPageWords = computed(() => wordsList.value.slice(currentPage.value - 1, currentPage.value - 1 + perPage))
+const currentPageWords = computed(() => {
+  return wordsList.value.slice((currentPage.value - 1) * perPage, currentPage.value * perPage)
+})
 
 function handleDelete(id: string) {
   list.value?.$el.closeSlidingItems()
