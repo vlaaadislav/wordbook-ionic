@@ -60,7 +60,7 @@ async function saveNewWord() {
 
 <template>
   <IonFab slot="fixed" vertical="bottom" horizontal="end">
-    <IonFabButton id="add-word-fab-button" size="small">
+    <IonFabButton id="add-word-fab-button" class="ion-margin-bottom" size="small">
       <IonIcon :icon="add" />
     </IonFabButton>
 
