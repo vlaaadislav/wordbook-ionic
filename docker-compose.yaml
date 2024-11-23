@@ -2,8 +2,8 @@ services:
   ionic:
     build: .
     ports:
-      - "8100:8100"
-      - "35729:35729"
+      - '8100:8100'
+      - '35729:35729'
     volumes:
       - .:/app
     stdin_open: true

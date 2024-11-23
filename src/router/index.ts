@@ -1,20 +1,20 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from '@ionic/vue-router'
 
 const routes: Array<RouteRecordRaw> = [
-  { 
-     path: '/words',
-     component: () => import('../views/WordsList.vue')
+  {
+    path: '/words',
+    component: () => import('../views/WordsList.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/words'
-  }
+    redirect: '/words',
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
 })
 
 export default router

@@ -1,16 +1,31 @@
-<template>
-  <ion-app>
-    <ion-menu content-id="main-content" type="overlay">
-      <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-menu-button />
-          </ion-buttons>
+<script setup lang="ts">
+import {
+  IonApp,
+  IonButtons,
+  IonHeader,
+  IonMenu,
+  IonMenuButton,
+  IonRouterOutlet,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/vue'
+</script>
 
-          <ion-title>Wordbook</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    </ion-menu>
+<template>
+  <IonApp>
+    <IonMenu content-id="main-content" type="overlay">
+      <IonHeader>
+        <IonToolbar>
+          <template #start>
+            <IonButtons>
+              <IonMenuButton />
+            </IonButtons>
+          </template>
+
+          <IonTitle>Wordbook</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+    </IonMenu>
 
     <!-- <ion-header>
       <ion-toolbar>
@@ -22,19 +37,6 @@
       </ion-toolbar>
     </ion-header> -->
 
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-app>
+    <IonRouterOutlet id="main-content" />
+  </IonApp>
 </template>
-
-<script setup lang="ts">
-import {
-  IonApp,
-  IonHeader,
-  IonMenu,
-  IonRouterOutlet,
-  IonButtons,
-  IonToolbar,
-  IonMenuButton,
-  IonTitle,
-} from '@ionic/vue'
-</script>
