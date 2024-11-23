@@ -13,63 +13,62 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
-import { add } from 'ionicons/icons'
-import { computed, ref } from 'vue'
+import { useConfirmDialog } from '@vueuse/core'
+import { add, closeOutline } from 'ionicons/icons'
 import useTranslator from '../composables/use-word-list'
 
-const { appendWord, isLoading, error, isWordInWordList } = useTranslator()
+const { appendWord, error, isWordInWordList } = useTranslator()
 
 const newWord = ref('')
-const isModalOpen = ref(false)
+
+const { isRevealed, cancel: close, reveal } = useConfirmDialog()
+
 const isInputTouched = ref(false)
 
-const isNewWordValid = computed(() => newWord.value.trim().length > 0)
-const isWordAlreadyExists = computed(() => newWord.value && isModalOpen.value && isWordInWordList(newWord.value))
+const isNewWordValid = computed(() => newWord.value.length > 0)
+const isWordAlreadyExists = computed(() => newWord.value && isRevealed.value && isWordInWordList(newWord.value))
 const isWordAlreadyExistsText = computed(() => {
   return isWordAlreadyExists.value ? 'This word already in wordbook!' : undefined
 })
 
-function resetState() {
+async function showModal() {
+  await reveal()
   newWord.value = ''
   isInputTouched.value = false
 }
 
-function openModal() {
-  resetState()
-  isModalOpen.value = true
-}
-const closeModal = () => isModalOpen.value = false
-
 async function saveNewWord() {
+  if (!isNewWordValid.value) {
+    return
+  }
+
   await appendWord(newWord.value)
-  error.value || closeModal()
+  error.value || close()
 }
 </script>
 
 <template>
   <IonFab slot="fixed" vertical="bottom" horizontal="end">
-    <IonFabButton>
-      <IonIcon :icon="add" @click="openModal" />
+    <IonFabButton id="add-word-fab-button">
+      <IonIcon :icon="add" @click="reveal" />
     </IonFabButton>
 
-    <IonModal :is-open="isModalOpen" @did-dismiss="isModalOpen = false">
+    <IonModal :is-open="isRevealed" @did-dismiss="close()">
       <IonHeader>
         <IonToolbar>
           <IonTitle>Add a new word</IonTitle>
 
-          <template #end>
-            <IonButtons>
-              <IonButton @click="closeModal">
-                Close
-              </IonButton>
-            </IonButtons>
-          </template>
+          <IonButtons slot="end">
+            <IonButton @click="close()">
+              <IonIcon slot="icon-only" :icon="closeOutline" />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent :scroll-y="false" class="ion-padding">
         <IonInput
-          v-model="newWord"
+          v-model.trim="newWord"
           :class="{
             'ion-touched': isInputTouched,
             'ion-valid': isNewWordValid,
@@ -85,15 +84,16 @@ async function saveNewWord() {
         />
       </IonContent>
 
-      <IonFooter class="modal-footer ion-no-border ion-padding">
-        <IonButton
-          expand="block"
-          :disabled="!isNewWordValid || isLoading"
-          :color="isWordAlreadyExists ? 'warning' : 'primary'"
-          @click="saveNewWord"
-        >
-          {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
-        </IonButton>
+      <IonFooter class="ion-no-border ion-padding">
+        <IonButtons>
+          <IonButton
+            expand="block"
+            :color="isWordAlreadyExists ? 'warning' : 'primary'"
+            @click="saveNewWord()"
+          >
+            {{ isWordAlreadyExists ? 'Save duplicate' : 'Save' }}
+          </IonButton>
+        </IonButtons>
       </IonFooter>
     </IonModal>
   </IonFab>
