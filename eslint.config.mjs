@@ -8,5 +8,6 @@ export default antfu({
       singleline: 3,
       multiline: 1,
     }],
+    'style/brace-style': ['error', '1tbs'],
   },
 })

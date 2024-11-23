@@ -5,7 +5,7 @@ import {
   IonModal,
   toastController,
 } from '@ionic/vue'
-import useTranslator from '../composables/useWordList'
+import useWordList from '../composables/useWordList'
 
 interface Props {
   trigger: string
@@ -13,7 +13,7 @@ interface Props {
 
 defineProps<Props>()
 
-const { appendWord, error, isWordInWordList, isLoading } = useTranslator()
+const { appendWord, error, isWordInWordList, isLoading } = useWordList()
 
 const isOpened = ref(false)
 
@@ -35,7 +35,7 @@ async function saveNewWord() {
     return
   }
 
-  await appendWord(wordToSave.value)
+  await appendWord(0, wordToSave.value)
 
   if (error.value) {
     return

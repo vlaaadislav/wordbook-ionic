@@ -39,6 +39,12 @@ defineEmits<Emits>()
       </IonLabel>
     </IonItem>
 
+    <IonItemOptions @ion-swipe="$emit('delete', item.id)">
+      <IonItemOption color="danger" @click="$emit('delete', item.id)">
+        Delete
+      </IonItemOption>
+    </IonItemOptions>
+
     <IonPopover
       v-if="item.options.length > 0"
       :trigger="item.id"
@@ -58,12 +64,6 @@ defineEmits<Emits>()
         </IonList>
       </IonContent>
     </IonPopover>
-
-    <IonItemOptions @ion-swipe="$emit('delete', item.id)">
-      <IonItemOption color="danger" @click="$emit('delete', item.id)">
-        Delete
-      </IonItemOption>
-    </IonItemOptions>
   </IonItemSliding>
 </template>
 
