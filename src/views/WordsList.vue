@@ -14,13 +14,20 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
-import { ref } from 'vue'
+import { useOffsetPagination } from '@vueuse/core'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 
 const list = ref<typeof IonList | null>(null)
 
-const currentPage = ref(1)
+const perPage = 2
+const { currentPage } = useOffsetPagination({
+  total: () => wordsList.value.length,
+  page: 1,
+  pageSize: perPage,
+})
+
+const currentPageWords = computed(() => wordsList.value.slice(currentPage.value - 1, currentPage.value - 1 + perPage))
 
 function handleDelete(id: number) {
   list.value?.$el.closeSlidingItems()
@@ -49,7 +56,7 @@ function handleDelete(id: number) {
     <IonContent>
       <IonList ref="list">
         <WordLine
-          v-for="word of wordsList"
+          v-for="word of currentPageWords"
           :key="word.id"
           :item="word"
           @option-select="changeTranslation"
@@ -58,6 +65,6 @@ function handleDelete(id: number) {
       </IonList>
     </IonContent>
 
-    <FooterPaginator v-model="currentPage" />
+    <FooterPaginator v-model="currentPage" :total="wordsList.length" :per-page="perPage" />
   </IonPage>
 </template>
