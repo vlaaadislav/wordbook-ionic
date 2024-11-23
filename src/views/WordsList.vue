@@ -4,25 +4,35 @@ import FooterPaginator from '@/components/FooterPaginator.vue'
 import WordLine from '@/components/WordLine.vue'
 import useWordList from '@/composables/use-word-list'
 import {
-  IonButtons,
   IonContent,
+  IonFooter,
   IonHeader,
   IonList,
-  IonMenuButton,
   IonPage,
   IonProgressBar,
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
+import { useOffsetPagination } from '@vueuse/core'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 
 const list = ref<typeof IonList | null>(null)
 
-const perPage = 10
-const currentPage = ref(1)
+const perPage = 15
+const { currentPage, pageCount } = useOffsetPagination({
+  total: () => wordsList.value.length,
+  pageSize: perPage,
+})
+
 const currentPageWords = computed(() => {
   return wordsList.value.slice((currentPage.value - 1) * perPage, currentPage.value * perPage)
+})
+
+watch(wordsList, (val, oldVal) => {
+  if (oldVal.length && val.length > oldVal.length) {
+    currentPage.value = pageCount.value
+  }
 })
 
 function handleDelete(id: string) {
@@ -33,24 +43,25 @@ function handleDelete(id: string) {
 
 <template>
   <IonPage>
-    <IonHeader>
+    <IonHeader id="header" class="ion-padding">
       <IonToolbar>
-        <template #start>
-          <IonButtons>
-            <IonMenuButton />
-          </IonButtons>
-        </template>
-
-        <IonTitle>Words List</IonTitle>
-
-        <IonProgressBar v-if="isLoading" type="indeterminate" />
+        <IonTitle size="large">
+          Wordbook
+        </IonTitle>
       </IonToolbar>
     </IonHeader>
 
+    <IonProgressBar v-if="isLoading" type="indeterminate" />
+
     <AddWord />
 
-    <IonContent>
-      <IonList ref="list">
+    <IonContent color="light">
+      <IonList
+        ref="list"
+        class="ion-no-padding words-list"
+        lines="none"
+        inset
+      >
         <WordLine
           v-for="word of currentPageWords"
           :key="word.id"
@@ -61,6 +72,14 @@ function handleDelete(id: string) {
       </IonList>
     </IonContent>
 
-    <FooterPaginator v-model="currentPage" :total="wordsList.length" :per-page="perPage" />
+    <IonFooter id="footer" class="ion-padding">
+      <FooterPaginator v-model="currentPage" :total="wordsList.length" :per-page="perPage" />
+    </IonFooter>
   </IonPage>
 </template>
+
+<style scoped>
+  .words-list {
+    background: var(--ion-color-light);
+  }
+</style>

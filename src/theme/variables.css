@@ -1,2 +1,9 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+
+
+:root {
+  --ion-background-color: var(--ion-background-color-step-50, #f2f2f6);
+  --ion-toolbar-background: var(--ion-background-color);
+  --ion-item-background: #fff;
+}

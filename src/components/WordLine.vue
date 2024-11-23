@@ -25,7 +25,7 @@ defineEmits<Emits>()
 </script>
 
 <template>
-  <IonItemSliding>
+  <IonItemSliding class="word-line">
     <IonItem :id="item.id" button>
       <IonLabel class="ion-text-start">
         {{ item.source }}
@@ -62,3 +62,9 @@ defineEmits<Emits>()
     </IonItemOptions>
   </IonItemSliding>
 </template>
+
+<style scoped>
+  .word-line + .word-line {
+    margin-top: calc(var(--ion-margin, 16px) / 2);
+  }
+</style>
