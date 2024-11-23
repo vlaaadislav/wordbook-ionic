@@ -21,14 +21,17 @@ const { isTranslationVisible } = useWordbookSettings()
 
 const list = ref<typeof IonList | null>(null)
 
-const perPage = 15
+const { perPage } = useWordbookSettings()
 const { currentPage, pageCount } = useOffsetPagination({
   total: () => wordsList.value.length,
-  pageSize: perPage,
+  pageSize: () => {
+    console.log(perPage.value)
+    return perPage.value
+  },
 })
 
 const currentPageWords = computed(() => {
-  return wordsList.value.slice((currentPage.value - 1) * perPage, currentPage.value * perPage)
+  return wordsList.value.slice((currentPage.value - 1) * perPage.value, currentPage.value * perPage.value)
 })
 
 watch(wordsList, (val, oldVal) => {
