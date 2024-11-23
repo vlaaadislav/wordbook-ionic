@@ -2,8 +2,8 @@
 import FooterPaginator from '@/components/FooterPaginator.vue'
 import WordLine from '@/components/WordLine.vue'
 import WordsListOperations from '@/components/WordsListOperations.vue'
-import useWordList from '@/composables/useWordList'
 import useWordbookSettings from '@/composables/useWordbookSettings'
+import useWordList from '@/composables/useWordList'
 import {
   IonContent,
   IonFooter,
@@ -24,10 +24,7 @@ const list = ref<typeof IonList | null>(null)
 const { perPage } = useWordbookSettings()
 const { currentPage, pageCount } = useOffsetPagination({
   total: () => wordsList.value.length,
-  pageSize: () => {
-    console.log(perPage.value)
-    return perPage.value
-  },
+  pageSize: () => perPage.value,
 })
 
 const currentPageWords = computed(() => {

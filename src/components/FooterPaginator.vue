@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { IonButton, IonButtons, IonFooter, IonIcon, IonToolbar } from '@ionic/vue'
+import { IonButton, IonButtons, IonIcon, IonToolbar } from '@ionic/vue'
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons'
 import { Pagination } from 'reka-ui/namespaced'
 
