@@ -50,7 +50,7 @@ function handleDelete(id: string) {
 
 <template>
   <IonPage>
-    <IonHeader id="header" class="ion-padding">
+    <IonHeader id="header" class="ion-padding-vertical">
       <IonToolbar>
         <IonTitle size="large">
           Wordbook

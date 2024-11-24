@@ -33,7 +33,7 @@ function updatePerPage() {
 <template>
   <IonPage>
     <IonHeader class="ion-no-border">
-      <IonToolbar class="ion-padding">
+      <IonToolbar class="ion-padding-vertical">
         <IonButtons slot="start">
           <IonBackButton default-href="/" />
         </IonButtons>
