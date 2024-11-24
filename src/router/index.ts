@@ -1,10 +1,14 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/words',
     component: () => import('../views/WordsList.vue'),
+  },
+  {
+    path: '/settings',
+    component: () => import('../views/Settings.vue'),
   },
   {
     path: '/:pathMatch(.*)*',

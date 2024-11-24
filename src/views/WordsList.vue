@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import FooterPaginator from '@/components/FooterPaginator.vue'
+import ToolbarPopover from '@/components/ToolbarPopover.vue'
 import WordLine from '@/components/WordLine.vue'
 import WordsListOperations from '@/components/WordsListOperations.vue'
 import useWordbookSettings from '@/composables/useWordbookSettings'
 import useWordList from '@/composables/useWordList'
 import {
+  IonButton,
+  IonButtons,
   IonContent,
   IonFooter,
   IonHeader,
+  IonIcon,
   IonList,
   IonPage,
   IonProgressBar,
@@ -15,6 +19,7 @@ import {
   IonToolbar,
 } from '@ionic/vue'
 import { useOffsetPagination } from '@vueuse/core'
+import { ellipsisVertical } from 'ionicons/icons'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
 const { isTranslationVisible } = useWordbookSettings()
@@ -50,6 +55,14 @@ function handleDelete(id: string) {
         <IonTitle size="large">
           Wordbook
         </IonTitle>
+
+        <IonButtons slot="end">
+          <IonButton id="toolbar-popover-trigger">
+            <IonIcon slot="icon-only" :icon="ellipsisVertical" />
+          </IonButton>
+        </IonButtons>
+
+        <ToolbarPopover trigger="toolbar-popover-trigger" />
       </IonToolbar>
     </IonHeader>
 
