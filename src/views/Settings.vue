@@ -78,8 +78,12 @@ function updatePerPage() {
   </IonPage>
 </template>
 
-<style>
+<style scoped>
   ion-item {
     --transition: none;
+  }
+
+  ion-input :deep(.label-text-wrapper) {
+    transition: none !important;
   }
 </style>

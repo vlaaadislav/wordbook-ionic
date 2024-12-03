@@ -39,8 +39,8 @@ defineEmits<Emits>()
       </IonLabel>
     </IonItem>
 
-    <IonItemOptions @ion-swipe="$emit('delete', item.id)">
-      <IonItemOption color="danger" @click="$emit('delete', item.id)">
+    <IonItemOptions side="end" @ion-swipe="$emit('delete', item.id)">
+      <IonItemOption color="danger" expandable @click="$emit('delete', item.id)">
         Delete
       </IonItemOption>
     </IonItemOptions>
