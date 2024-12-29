@@ -7,6 +7,13 @@ export interface TranslatorResponse {
   options: string[]
 }
 
-export function translate(source: string) {
-  return translateByYandex(source.trim())
+export interface Options {
+  dictKey: string
+  translateKey: string
+}
+
+export type Translator = (source: string, options?: Options) => Promise<TranslatorResponse>
+
+export function translate(source: string, options?: Options) {
+  return translateByYandex(source.trim(), options)
 }

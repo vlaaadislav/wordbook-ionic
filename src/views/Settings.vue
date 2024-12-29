@@ -2,9 +2,11 @@
 import useWordbookSettings from '@/composables/useWordbookSettings'
 import {
   IonBackButton,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonList,
@@ -15,8 +17,9 @@ import {
   IonToolbar,
 } from '@ionic/vue'
 import { syncRef } from '@vueuse/core'
+import { arrowUndoCircleOutline } from 'ionicons/icons'
 
-const { darkMode, perPage } = useWordbookSettings()
+const { darkMode, perPage, dictKey, translateKey, defaultValues } = useWordbookSettings()
 
 const perPageModel = ref(perPage.value)
 syncRef(perPage, perPageModel, { direction: 'ltr' })
@@ -51,6 +54,40 @@ function updatePerPage() {
           <IonToggle v-model="darkMode">
             Dark mode
           </IonToggle>
+        </IonItem>
+      </IonList>
+
+      <IonListHeader>
+        API
+      </IonListHeader>
+      <IonList inset>
+        <IonItem>
+          <IonInput
+            v-model="dictKey"
+            label="Yandex Dictionary API key"
+            placeholder="Enter API key..."
+            label-placement="floating"
+            required
+          >
+            <IonButton slot="end" fill="clear" @click="dictKey = defaultValues.dictKey">
+              <IonIcon slot="icon-only" :icon="arrowUndoCircleOutline" size="small" />
+            </IonButton>
+          </IonInput>
+        </IonItem>
+      </IonList>
+      <IonList inset>
+        <IonItem>
+          <IonInput
+            v-model="translateKey"
+            label="Yandex Translate API key"
+            placeholder="Enter API key..."
+            label-placement="floating"
+            required
+          >
+            <IonButton slot="end" fill="clear" @click="translateKey = defaultValues.translateKey">
+              <IonIcon slot="icon-only" :icon="arrowUndoCircleOutline" size="small" />
+            </IonButton>
+          </IonInput>
         </IonItem>
       </IonList>
 

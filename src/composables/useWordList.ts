@@ -3,6 +3,7 @@ import { toastController } from '@ionic/vue'
 import { createGlobalState, useAsyncState } from '@vueuse/core'
 import { translate } from '../services/translator'
 import useStorage from './useStorage'
+import useWordbookSettings from './useWordbookSettings'
 
 export const WORD_LIST_STORAGE_KEY = 'word-list'
 
@@ -15,6 +16,8 @@ export default createGlobalState(() => {
       duration: 1500,
     }).then(toast => toast.present())
   }
+
+  const { dictKey, translateKey } = useWordbookSettings()
 
   const wordsList = useStorage<TranslatorResponse[]>(WORD_LIST_STORAGE_KEY, [], {
     onError,
@@ -31,7 +34,10 @@ export default createGlobalState(() => {
   }
 
   const { execute: appendWord, isLoading, error } = useAsyncState(async (source: string) => {
-    wordsList.value = [...wordsList.value, await translate(source)]
+    wordsList.value = [...wordsList.value, await translate(source, {
+      dictKey: dictKey.value,
+      translateKey: translateKey.value,
+    })]
   }, null, { onError, immediate: false })
 
   const isWordInWordList = (source: string) => {

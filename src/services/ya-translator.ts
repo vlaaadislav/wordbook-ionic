@@ -1,4 +1,4 @@
-import type { TranslatorResponse } from './translator'
+import type { Translator } from './translator'
 import { v4 as uuidv4 } from 'uuid'
 import { capitalize } from 'vue'
 
@@ -34,10 +34,11 @@ async function doRequest(...args: Parameters<typeof fetch>): ReturnType<typeof f
   return response
 }
 
-async function translateByDictionary(word: string): Promise<TranslatorResponse> {
+const translateByDictionary: Translator = async (word, translatorOptions) => {
   const flags = DICT_FLAGS.MORPHO | DICT_FLAGS.POS_FILTER
+  const dictKey = translatorOptions?.dictKey ?? DICT_KEY
 
-  const url = `${DICT}?key=${DICT_KEY}&lang=en-ru&flags=${flags}&text=${encodeURIComponent(word)}`
+  const url = `${DICT}?key=${dictKey}&lang=en-ru&flags=${flags}&text=${encodeURIComponent(word)}`
   const data: DictionaryResponse = await (await doRequest(url)).json()
 
   const options = data.def.flatMap((entry) => {
@@ -52,8 +53,9 @@ async function translateByDictionary(word: string): Promise<TranslatorResponse> 
   }
 }
 
-async function translateByTranslate(source: string): Promise<TranslatorResponse> {
-  const url = `${TRANSLATE}?key=${TRANSLATE_KEY}&lang=en-ru&flags=15&text=${encodeURIComponent(source)}`
+const translateByTranslate: Translator = async (source, translatorOptions) => {
+  const translateKey = translatorOptions?.translateKey ?? TRANSLATE_KEY
+  const url = `${TRANSLATE}?key=${translateKey}&lang=en-ru&flags=15&text=${encodeURIComponent(source)}`
   const data: TranslateResponse = await (await doRequest(url)).json()
 
   const options = data.text || []
@@ -66,12 +68,14 @@ async function translateByTranslate(source: string): Promise<TranslatorResponse>
   }
 }
 
-export default async function translate(source: string): Promise<TranslatorResponse> {
-  const dictionary = await translateByDictionary(source)
+const translate: Translator = async (source, options) => {
+  const dictionary = await translateByDictionary(source, options)
 
   if (dictionary.options.length === 0) {
-    return translateByTranslate(source)
+    return translateByTranslate(source, options)
   }
 
   return dictionary
 }
+
+export default translate

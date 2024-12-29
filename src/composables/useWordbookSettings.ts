@@ -1,7 +1,8 @@
+import type { Options as TranslatorOptions } from '@/services/translator'
 import { createGlobalState, toReactive } from '@vueuse/core'
 import useStorage from './useStorage'
 
-export interface UserSettings {
+export interface UserSettings extends TranslatorOptions {
   perPage: number
   darkMode: boolean
 }
@@ -10,21 +11,29 @@ export const WORD_LIST_STORAGE_KEY = 'settings'
 
 function useDarkMode() {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-  const intitialValue = prefersDark.matches
+  const initialValue = prefersDark.matches
   const toggleDarkPalette = (shouldAdd: boolean) => {
     document.documentElement.classList.toggle('ion-palette-dark', shouldAdd)
   }
 
-  return { prefersDark, intitialValue, toggleDarkPalette }
+  return { prefersDark, initialValue, toggleDarkPalette }
 }
 
 export default createGlobalState(() => {
-  const { toggleDarkPalette, intitialValue } = useDarkMode()
+  const { toggleDarkPalette, initialValue } = useDarkMode()
 
-  const userSettings = useStorage<UserSettings>('WORD_LIST_STORAGE_KEY', {
+  const defaultValues: UserSettings = {
     perPage: 15,
-    darkMode: intitialValue,
-  }, { mergeDefaults: true })
+    darkMode: initialValue,
+    dictKey: import.meta.env.VITE_YANDEX_DICT_KEY,
+    translateKey: import.meta.env.VITE_YANDEX_TRANSLATE_KEY,
+  }
+
+  const userSettings = useStorage<UserSettings>(
+    'WORD_LIST_STORAGE_KEY',
+    defaultValues,
+    { mergeDefaults: true },
+  )
 
   watchEffect(() => {
     toggleDarkPalette(userSettings.value.darkMode)
@@ -34,6 +43,7 @@ export default createGlobalState(() => {
 
   return {
     isTranslationVisible,
+    defaultValues,
     ...toRefs(toReactive(userSettings)),
   }
 })
