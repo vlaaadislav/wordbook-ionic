@@ -14,6 +14,7 @@ import {
 interface Props {
   item: TranslatorResponse
   showTranslation?: boolean
+  showSource?: boolean
 }
 
 interface Emits {
@@ -23,6 +24,7 @@ interface Emits {
 
 withDefaults(defineProps<Props>(), {
   showTranslation: true,
+  showSource: true,
 })
 defineEmits<Emits>()
 </script>
@@ -30,7 +32,7 @@ defineEmits<Emits>()
 <template>
   <IonItemSliding class="word-line">
     <IonItem :id="item.id" button>
-      <IonLabel class="ion-text-start">
+      <IonLabel v-show="showSource" class="ion-text-start">
         {{ item.source }}
       </IonLabel>
 

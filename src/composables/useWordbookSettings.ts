@@ -5,6 +5,7 @@ import useStorage from './useStorage'
 export interface UserSettings extends TranslatorOptions {
   perPage: number
   darkMode: boolean
+  wordsHideMode: 'translation' | 'source'
 }
 
 export const WORD_LIST_STORAGE_KEY = 'settings'
@@ -25,6 +26,7 @@ export default createGlobalState(() => {
   const defaultValues: UserSettings = {
     perPage: 15,
     darkMode: initialValue,
+    wordsHideMode: 'translation',
     dictKey: import.meta.env.VITE_YANDEX_DICT_KEY,
     translateKey: import.meta.env.VITE_YANDEX_TRANSLATE_KEY,
   }

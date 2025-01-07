@@ -22,7 +22,7 @@ import { useOffsetPagination } from '@vueuse/core'
 import { ellipsisVertical } from 'ionicons/icons'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
-const { isTranslationVisible } = useWordbookSettings()
+const { isTranslationVisible, wordsHideMode } = useWordbookSettings()
 
 const list = ref<typeof IonList | null>(null)
 
@@ -81,7 +81,8 @@ function handleDelete(id: string) {
           v-for="word of currentPageWords"
           :key="word.id"
           :item="word"
-          :show-translation="isTranslationVisible"
+          :show-translation="wordsHideMode === 'translation' ? isTranslationVisible : true"
+          :show-source="wordsHideMode === 'source' ? isTranslationVisible : true"
           @option-select="changeTranslation"
           @delete="handleDelete(word.id)"
         />

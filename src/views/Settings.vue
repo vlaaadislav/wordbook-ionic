@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import useWordbookSettings from '@/composables/useWordbookSettings'
+import useWordbookSettings, { type UserSettings } from '@/composables/useWordbookSettings'
 import {
   IonBackButton,
   IonButton,
@@ -12,6 +12,8 @@ import {
   IonList,
   IonListHeader,
   IonPage,
+  IonRadio,
+  IonRadioGroup,
   IonTitle,
   IonToggle,
   IonToolbar,
@@ -19,10 +21,22 @@ import {
 import { syncRef } from '@vueuse/core'
 import { arrowUndoCircleOutline } from 'ionicons/icons'
 
-const { darkMode, perPage, dictKey, translateKey, defaultValues } = useWordbookSettings()
+const {
+  darkMode,
+  perPage,
+  dictKey,
+  translateKey,
+  defaultValues,
+  wordsHideMode,
+} = useWordbookSettings()
 
 const perPageModel = ref(perPage.value)
 syncRef(perPage, perPageModel, { direction: 'ltr' })
+
+const wordsHideModeOptions: Array<{ label: string, value: UserSettings['wordsHideMode'] }> = [
+  { value: 'translation', label: 'Translation' },
+  { value: 'source', label: 'Source' },
+]
 
 function updatePerPage() {
   if (Math.round(perPageModel.value)) {
@@ -58,6 +72,24 @@ function updatePerPage() {
       </IonList>
 
       <IonListHeader>
+        Words hiding mode
+      </IonListHeader>
+
+      <IonList inset>
+        <IonItem>
+          <IonRadioGroup v-model="wordsHideMode" class="radio-group">
+            <IonRadio
+              v-for="option of wordsHideModeOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </IonRadio>
+          </IonRadioGroup>
+        </IonItem>
+      </IonList>
+
+      <IonListHeader>
         API
       </IonListHeader>
       <IonList inset>
@@ -69,7 +101,12 @@ function updatePerPage() {
             label-placement="floating"
             required
           >
-            <IonButton slot="end" fill="clear" @click="dictKey = defaultValues.dictKey">
+            <IonButton
+              v-show="dictKey !== defaultValues.dictKey"
+              slot="end"
+              fill="clear"
+              @click="dictKey = defaultValues.dictKey"
+            >
               <IonIcon slot="icon-only" :icon="arrowUndoCircleOutline" size="small" />
             </IonButton>
           </IonInput>
@@ -84,7 +121,12 @@ function updatePerPage() {
             label-placement="floating"
             required
           >
-            <IonButton slot="end" fill="clear" @click="translateKey = defaultValues.translateKey">
+            <IonButton
+              v-show="translateKey !== defaultValues.translateKey"
+              slot="end"
+              fill="clear"
+              @click="translateKey = defaultValues.translateKey"
+            >
               <IonIcon slot="icon-only" :icon="arrowUndoCircleOutline" size="small" />
             </IonButton>
           </IonInput>
@@ -122,5 +164,9 @@ function updatePerPage() {
 
   ion-input :deep(.label-text-wrapper) {
     transition: none !important;
+  }
+
+  .radio-group {
+    width: 100%;
   }
 </style>
