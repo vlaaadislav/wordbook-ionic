@@ -18,7 +18,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue'
-import { useOffsetPagination } from '@vueuse/core'
 import { ellipsisVertical } from 'ionicons/icons'
 
 const { isLoading, wordsList, deleteWord, changeTranslation } = useWordList()
@@ -26,11 +25,8 @@ const { isTranslationVisible, wordsHideMode } = useWordbookSettings()
 
 const list = ref<typeof IonList | null>(null)
 
-const { perPage } = useWordbookSettings()
-const { currentPage, pageCount } = useOffsetPagination({
-  total: () => wordsList.value.length,
-  pageSize: () => perPage.value,
-})
+const { perPage, page: currentPage } = useWordbookSettings()
+const pageCount = computed(() => Math.ceil(wordsList.value.length / perPage.value))
 
 const currentPageWords = computed(() => {
   return wordsList.value.slice((currentPage.value - 1) * perPage.value, currentPage.value * perPage.value)
@@ -90,7 +86,12 @@ function handleDelete(id: string) {
     </IonContent>
 
     <IonFooter id="footer" class="ion-padding">
-      <FooterPaginator v-model="currentPage" :total="wordsList.length" :per-page="perPage" />
+      <FooterPaginator
+        :key="pageCount"
+        v-model="currentPage"
+        :total="wordsList.length"
+        :per-page="perPage"
+      />
     </IonFooter>
   </IonPage>
 </template>

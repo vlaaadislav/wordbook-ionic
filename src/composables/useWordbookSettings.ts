@@ -4,6 +4,7 @@ import useStorage from './useStorage'
 
 export interface UserSettings extends TranslatorOptions {
   perPage: number
+  page: number
   darkMode: boolean
   wordsHideMode: 'translation' | 'source'
 }
@@ -24,6 +25,7 @@ export default createGlobalState(() => {
   const { toggleDarkPalette, initialValue } = useDarkMode()
 
   const defaultValues: UserSettings = {
+    page: 1,
     perPage: 15,
     darkMode: initialValue,
     wordsHideMode: 'translation',
