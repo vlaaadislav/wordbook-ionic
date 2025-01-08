@@ -34,7 +34,7 @@ export default createGlobalState(() => {
   }
 
   const userSettings = useStorage<UserSettings>(
-    'WORD_LIST_STORAGE_KEY',
+    WORD_LIST_STORAGE_KEY,
     defaultValues,
     { mergeDefaults: true },
   )
